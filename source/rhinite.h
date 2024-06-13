@@ -16,4 +16,6 @@ personne_t * init_population(int num_personnes, int taille_grille);
 
 void deplacement_alea(personne_t * population, int num_personnes, int taille_grille);
 
+void init_contamination(personne_t * population, int nb_initial_contamines, int num_personnes);
+
 #endif

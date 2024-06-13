@@ -24,7 +24,7 @@ void melanger_positions(int ** positions, int n)
 // Fonction pour initialiser la population avec des coordonnées uniques
 personne_t * init_population(int num_personnes, int taille_grille) 
 {
-    personne_t *  population; 
+    personne_t *  population;
     int **        positions;
     int           index = 0;
 
@@ -92,6 +92,15 @@ void deplacement_alea(personne_t * population, int num_personnes, int taille_gri
     }
 }
 
+void init_contamination(personne_t * population, int nb_initial_contamines, int num_personnes) 
+{
+    for (int i = 0; i < nb_initial_contamines; i++) {
+        int index = genrand_int32() % num_personnes;
+        population[index].etat = INCUBANT;
+        population[index].jour_infection = 1;
+    }
+}
+
 int main() 
 {
     // Initialisation du générateur de pseudo-aléatoire
@@ -104,12 +113,13 @@ int main()
     int           taille_grille = 50;
 
     population = init_population(num_personnes, taille_grille);
+    init_contamination(population, num_personnes/10, taille_grille);
 
     for (int j = 0; j < 3; j++) 
     {  
         // Afficher les coordonnées des individus pour vérifier l'unicité
         for (int i = 0; i < num_personnes; i++) {
-            printf("Personne %d: (%d, %d)\n", i, population[i].x, population[i].y);
+            printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
         }
         printf("\n");
 
