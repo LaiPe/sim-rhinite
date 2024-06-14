@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "../packages/menuing/menuing.h"
 #include "../packages/mt19937ar/mt19937ar.h"
@@ -86,11 +87,79 @@ personne_t * init_population(int num_personnes, int taille_grille)
     return population;
 }
 
-void deplacement_alea(personne_t * population, int num_personnes, int taille_grille)
+
+// Fonction pour vérifier si une position est occupée
+bool position_occupee(personne_t * population, int num_personnes, int x, int y, int taille_grille) 
 {
+    for (int i = 0; i < num_personnes; i++) 
+    {
+        if (population[i].x == x && population[i].y == y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void deplacement_alea(personne_t * population, int num_personnes, int taille_grille) {
     for (int i = 0; i < num_personnes; i++) {
-        int direction = genrand_int32() % 4;
-        switch (direction) {
+        // Liste des directions possibles
+        bool directions_possibles[4] = {true, true, true, true}; // Droite, Gauche, Haut, Bas
+        int nb_directions_possibles = 4;
+
+        // Vérifier les directions possibles
+        int nouvelle_x, nouvelle_y;
+
+        // Droite
+        nouvelle_x = (population[i].x + 1) % taille_grille;
+        nouvelle_y = population[i].y;
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        {
+            directions_possibles[0] = false;
+            nb_directions_possibles--;
+        }
+
+        // Gauche
+        nouvelle_x = (population[i].x - 1 + taille_grille) % taille_grille;
+        nouvelle_y = population[i].y;
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        {
+            directions_possibles[1] = false;
+            nb_directions_possibles--;
+        }
+
+        // Haut
+        nouvelle_x = population[i].x;
+        nouvelle_y = (population[i].y + 1) % taille_grille;
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        {
+            directions_possibles[2] = false;
+            nb_directions_possibles--;
+        }
+
+        // Bas
+        nouvelle_x = population[i].x;
+        nouvelle_y = (population[i].y - 1 + taille_grille) % taille_grille;
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        {
+            directions_possibles[3] = false;
+            nb_directions_possibles--;
+        }
+
+        // S'il n'y a pas de directions possibles, ne pas se déplacer
+        if (nb_directions_possibles == 0) 
+        {
+            continue;
+        }
+
+        // Sélectionner une direction parmi les possibles
+        int direction_choisie;
+        do {
+            direction_choisie = genrand_int32() % 4;
+        } while (!directions_possibles[direction_choisie]);
+
+    
+        // Effectuer le déplacement dans la direction choisie
+        switch (direction_choisie) {
             case 0: population[i].x = (population[i].x + 1) % taille_grille; break; // Droite
             case 1: population[i].x = (population[i].x - 1 + taille_grille) % taille_grille; break; // Gauche
             case 2: population[i].y = (population[i].y + 1) % taille_grille; break; // Haut
