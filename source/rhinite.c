@@ -4,6 +4,7 @@
 
 #include "../packages/menuing/menuing.h"
 #include "../packages/mt19937ar/mt19937ar.h"
+#include "../packages/csv/csv.h"
 
 #include "./rhinite.h"
 
@@ -253,13 +254,6 @@ int * launch_sim(int nb_jours, personne_t * population, int taille_grille, int n
     {  
         int nb_contamination_jour = 0;
 
-        // Afficher les individus pour apprécier l'évolution de la maladie
-        printf("Jour %d :\n", j+1);
-        for (int i = 0; i < num_personnes; i++) {
-            printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
-        }
-        printf("\n");
-
         // Cycle de journée (24h)
         for (int h = 1; h <= 24; h++)
         {   
@@ -286,37 +280,43 @@ int main()
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
     init_by_array(init, length);
 
-    // Déclarations variables état programme
-    personne_t *  population;
+
+    // Déclaration constantes programme
+    double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
+
+    // Déclarations variables programme (constantes expérience)
     int           taille_grille;
     int           num_personnes;
-    int           num_infect_init;
-
     int           duree_incubation; // en jours
     int           duree_contagion; // en jours
     int           duree_imunitee; // en jours
 
-    double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
+    // Déclarations variables programme (variables expérience)
+    personne_t *  population;
+    int           num_infect_init;
     
 
-    // Initialisation variables état programme
-    taille_grille = 5;
-    num_personnes = 5;
-    num_infect_init = 1;
-
+    // Initialisation constantes expérience
+    taille_grille = 50;
+    num_personnes = 100;
     duree_incubation = 2;
     duree_contagion = 9;
-    duree_imunitee = 20;
+    duree_imunitee = 45;
+
+
    
-    population = init_population(num_personnes, taille_grille);
-    init_contamination(population, num_infect_init, num_personnes);
+    for (num_infect_init = 1; num_infect_init <= 10; num_infect_init++)
+    {
+        population = init_population(num_personnes, taille_grille);
+        init_contamination(population, num_infect_init, num_personnes);
 
-    int * stats_contagion = launch_sim(10, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
-    for (int i = 0; i<10; i++){
-        printf("%d ", stats_contagion[i]);
+        int * stats_contagion = launch_sim(10, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
+
+        char nom_fichier[50];
+        snprintf(nom_fichier, sizeof(nom_fichier), "infect_init_%d.csv", num_infect_init);
+
+        write_int_array_CSV(nom_fichier, stats_contagion, 10);
     }
-    printf("\n");
     
-
     return 0;
 }

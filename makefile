@@ -18,4 +18,4 @@ csv.o: packages/csv/csv.c packages/csv/csv.h
 	gcc $(OPT) -c packages/csv/csv.c
 
 clean:
-	rm -f rhinite.o mt19937ar.o menuing.o rhinite
+	rm -rf rhinite.o mt19937ar.o menuing.o csv.o rhinite out/
