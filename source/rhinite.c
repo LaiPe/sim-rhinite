@@ -101,6 +101,33 @@ void init_contamination(personne_t * population, int nb_initial_contamines, int 
     }
 }
 
+void evolution_journaliere_maladie(personne_t * population, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee)
+{
+    for (int i = 0; i < num_personnes; i++)
+    {
+        // Incrémentation jours infections
+        if (population[i].etat != SAIN)
+        {
+            population[i].jour_infection++;
+        }
+
+
+        if (population[i].etat == INCUBANT && population[i].jour_infection > duree_incubation) 
+        {
+            population[i].etat = CONTAGIEUX;
+        } 
+        else if (population[i].etat == CONTAGIEUX && population[i].jour_infection > (duree_incubation + duree_contagion)) 
+        {
+            population[i].etat = GUERI;
+        } 
+        else if (population[i].etat == GUERI && population[i].jour_infection > (duree_incubation + duree_contagion + duree_imunitee))
+        {
+            population[i].etat = SAIN;
+            population[i].jour_infection = 0;
+        }  
+    }
+}
+
 int main() 
 {
     // Initialisation du générateur de pseudo-aléatoire
@@ -109,21 +136,41 @@ int main()
 
     // Déclarations variables état programme
     personne_t *  population;
-    int           num_personnes = 10;
-    int           taille_grille = 50;
+    int           taille_grille;
+    int           num_personnes;
+    int           num_infect_init;
+
+    int           duree_incubation; // en jours
+    int           duree_contagion; // en jours
+    int           duree_imunitee; // en jours
+    
+
+    // Initialisation variables état programme
+    taille_grille = 50;
+    num_personnes = 10;
+    num_infect_init = 1;
+
+    duree_incubation = 2;
+    duree_contagion = 9;
+    duree_imunitee = 20;
+   
 
     population = init_population(num_personnes, taille_grille);
-    init_contamination(population, num_personnes/10, taille_grille);
+    init_contamination(population, num_infect_init, num_personnes);
 
-    for (int j = 0; j < 3; j++) 
+    for (int j = 1; j < 40; j++) 
     {  
-        // Afficher les coordonnées des individus pour vérifier l'unicité
+        // Afficher les individus pour apprécier l'évolution de la maladie
+        printf("Jour %d :\n", j);
         for (int i = 0; i < num_personnes; i++) {
             printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
         }
         printf("\n");
 
-        deplacement_alea(population, num_personnes, taille_grille);
+        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
+
+        //deplacement_alea(population, num_personnes, taille_grille);
+        
     }
 
     return 0;
