@@ -1,12 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include "./csv.h"
 
 void write_int_array_CSV(const char *filename, int *array, int size)
 {
-    FILE *file = fopen(filename, "w");
-    
+    // Création du répertoire ./out s'il n'existe pas
+    struct stat st = {0};
+    if (stat("./out", &st) == -1) {
+        if (mkdir("./out", 0700) != 0) {
+            perror("Error creating directory");
+            return;
+        }
+    }
+
+    // Construction du chemin complet du fichier
+    char filepath[100];
+    snprintf(filepath, sizeof(filepath), "./out/%s", filename);
+
+    FILE *file = fopen(filepath, "w");
     if (file == NULL) {
-        perror("Erreur ouverture fichier");
+        perror("Error opening file");
         return;
     }
     
