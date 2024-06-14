@@ -24,6 +24,13 @@ void melanger_positions(int ** positions, int n)
 // Fonction pour initialiser la population avec des coordonnées uniques
 personne_t * init_population(int num_personnes, int taille_grille) 
 {
+    if (num_personnes > taille_grille * taille_grille)
+    {
+        perror("Grille trop petite pour contenir le nombre de personnes");
+        exit(1);
+    }
+
+
     personne_t *  population;
     int **        positions;
     int           index = 0;
@@ -128,6 +135,42 @@ void evolution_journaliere_maladie(personne_t * population, int num_personnes, i
     }
 }
 
+void contamination(personne_t * population, int num_personnes, int taille_grille, double * proba_contamination)
+{
+    // Pour chaque personne de la population...
+    for (int i = 0; i < num_personnes; i++)
+    {
+        // ... étant contagieuse.
+        if (population[i].etat == CONTAGIEUX) 
+        {
+            // Vérifier les voisins dans un voisinage de Moore d'ordre 2
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dy = -2; dy <= 2; dy++) {
+                    if (dx != 0 || dy != 0) 
+                    {
+                        int nx = (population[i].x + dx + taille_grille) % taille_grille;
+                        int ny = (population[i].y + dy + taille_grille) % taille_grille;
+
+                        for (int j = 0; j < num_personnes; j++) 
+                        {
+                            // Pour chaque voisin sain
+                            if (population[j].x == nx && population[j].y == ny && population[j].etat == SAIN) 
+                            {
+                                // Jet aléatoire en fonction du taux d'infectiosité de la personne contagieuse (i)
+                                if (genrand_real1() <= proba_contamination[population[i].jour_infection]) 
+                                {
+                                    population[j].etat = INCUBANT;
+                                    population[j].jour_infection = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 int main() 
 {
     // Initialisation du générateur de pseudo-aléatoire
@@ -143,6 +186,8 @@ int main()
     int           duree_incubation; // en jours
     int           duree_contagion; // en jours
     int           duree_imunitee; // en jours
+
+    double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
     
 
     // Initialisation variables état programme
@@ -154,10 +199,11 @@ int main()
     duree_contagion = 9;
     duree_imunitee = 20;
    
-
     population = init_population(num_personnes, taille_grille);
     init_contamination(population, num_infect_init, num_personnes);
 
+
+    // Cycle de 40 jours
     for (int j = 1; j < 40; j++) 
     {  
         // Afficher les individus pour apprécier l'évolution de la maladie
@@ -167,10 +213,20 @@ int main()
         }
         printf("\n");
 
-        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
+        // Cycle de journée (24h)
+        for (int h = 1; h <= 24; h++)
+        {   
+            contamination(population, num_personnes, taille_grille, proba_contamination);
 
-        //deplacement_alea(population, num_personnes, taille_grille);
-        
+            // Horaires d'activité [6h ; 22h]
+            if (h >= 6 && h <= 22)
+            {
+                deplacement_alea(population, num_personnes, taille_grille);
+            }
+            
+        }
+
+        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
     }
 
     return 0;
