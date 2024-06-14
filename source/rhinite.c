@@ -204,8 +204,10 @@ void evolution_journaliere_maladie(personne_t * population, int num_personnes, i
     }
 }
 
-void contamination(personne_t * population, int num_personnes, int taille_grille, double * proba_contamination)
+int contamination(personne_t * population, int num_personnes, int taille_grille, double * proba_contamination)
 {
+    int nb_contamination_heure = 0;
+
     // Pour chaque personne de la population...
     for (int i = 0; i < num_personnes; i++)
     {
@@ -230,6 +232,7 @@ void contamination(personne_t * population, int num_personnes, int taille_grille
                                 {
                                     population[j].etat = INCUBANT;
                                     population[j].jour_infection = 1;
+                                    nb_contamination_heure++;
                                 }
                             }
                         }
@@ -238,14 +241,20 @@ void contamination(personne_t * population, int num_personnes, int taille_grille
             }
         }
     }
+    return nb_contamination_heure;
 }
 
-void launch_sim(int nb_jours, personne_t * population, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination)
+int * launch_sim(int nb_jours, personne_t * population, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination)
 {
-    for (int j = 1; j <= nb_jours; j++) 
+    // Statistiques sur l'évolution de la contagion
+    int * nb_contamination = malloc(nb_jours * sizeof(int));
+
+    for (int j = 0; j < nb_jours; j++) 
     {  
+        int nb_contamination_jour = 0;
+
         // Afficher les individus pour apprécier l'évolution de la maladie
-        printf("Jour %d :\n", j);
+        printf("Jour %d :\n", j+1);
         for (int i = 0; i < num_personnes; i++) {
             printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
         }
@@ -254,7 +263,7 @@ void launch_sim(int nb_jours, personne_t * population, int taille_grille, int nu
         // Cycle de journée (24h)
         for (int h = 1; h <= 24; h++)
         {   
-            contamination(population, num_personnes, taille_grille, proba_contamination);
+            nb_contamination_jour += contamination(population, num_personnes, taille_grille, proba_contamination);
 
             // Horaires d'activité [6h ; 22h]
             if (h >= 6 && h <= 22)
@@ -264,8 +273,11 @@ void launch_sim(int nb_jours, personne_t * population, int taille_grille, int nu
             
         }
 
+        nb_contamination[j] = nb_contamination_jour;
+
         evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
     }
+    return nb_contamination;
 }
 
 int main() 
@@ -288,8 +300,8 @@ int main()
     
 
     // Initialisation variables état programme
-    taille_grille = 50;
-    num_personnes = 10;
+    taille_grille = 5;
+    num_personnes = 5;
     num_infect_init = 1;
 
     duree_incubation = 2;
@@ -299,7 +311,11 @@ int main()
     population = init_population(num_personnes, taille_grille);
     init_contamination(population, num_infect_init, num_personnes);
 
-    launch_sim(40, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
+    int * stats_contagion = launch_sim(10, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
+    for (int i = 0; i<10; i++){
+        printf("%d ", stats_contagion[i]);
+    }
+    printf("\n");
     
 
     return 0;
