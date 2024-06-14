@@ -3,7 +3,8 @@ OPT = -Wall -g
 all: rhinite
 
 rhinite : rhinite.o mt19937ar.o menuing.o csv.o
-	gcc $(OPT) rhinite.o mt19937ar.o menuing.o csv.o -o rhinite
+	gcc $(OPT) rhinite.o mt19937ar.o menuing.o csv.o -o rhinite -lm
+
 
 rhinite.o: source/rhinite.c
 	gcc $(OPT) -c source/rhinite.c
@@ -17,5 +18,10 @@ menuing.o: packages/menuing/menuing.c packages/menuing/menuing.h
 csv.o: packages/csv/csv.c packages/csv/csv.h
 	gcc $(OPT) -c packages/csv/csv.c
 
+
+
 clean:
 	rm -rf rhinite.o mt19937ar.o menuing.o csv.o rhinite out/
+
+dev: rhinite.o mt19937ar.o menuing.o csv.o
+	gcc $(OPT) rhinite.o mt19937ar.o menuing.o csv.o -o rhinite -lm -p
