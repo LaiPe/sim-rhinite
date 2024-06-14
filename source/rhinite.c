@@ -240,6 +240,34 @@ void contamination(personne_t * population, int num_personnes, int taille_grille
     }
 }
 
+void launch_sim(int nb_jours, personne_t * population, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination)
+{
+    for (int j = 1; j <= nb_jours; j++) 
+    {  
+        // Afficher les individus pour apprécier l'évolution de la maladie
+        printf("Jour %d :\n", j);
+        for (int i = 0; i < num_personnes; i++) {
+            printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
+        }
+        printf("\n");
+
+        // Cycle de journée (24h)
+        for (int h = 1; h <= 24; h++)
+        {   
+            contamination(population, num_personnes, taille_grille, proba_contamination);
+
+            // Horaires d'activité [6h ; 22h]
+            if (h >= 6 && h <= 22)
+            {
+                deplacement_alea(population, num_personnes, taille_grille);
+            }
+            
+        }
+
+        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
+    }
+}
+
 int main() 
 {
     // Initialisation du générateur de pseudo-aléatoire
@@ -271,32 +299,8 @@ int main()
     population = init_population(num_personnes, taille_grille);
     init_contamination(population, num_infect_init, num_personnes);
 
-
-    // Cycle de 40 jours
-    for (int j = 1; j < 40; j++) 
-    {  
-        // Afficher les individus pour apprécier l'évolution de la maladie
-        printf("Jour %d :\n", j);
-        for (int i = 0; i < num_personnes; i++) {
-            printf("Personne %d: (%d, %d) => État : %d (j=%d)\n", i, population[i].x, population[i].y, population[i].etat, population[i].jour_infection);
-        }
-        printf("\n");
-
-        // Cycle de journée (24h)
-        for (int h = 1; h <= 24; h++)
-        {   
-            contamination(population, num_personnes, taille_grille, proba_contamination);
-
-            // Horaires d'activité [6h ; 22h]
-            if (h >= 6 && h <= 22)
-            {
-                deplacement_alea(population, num_personnes, taille_grille);
-            }
-            
-        }
-
-        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
-    }
+    launch_sim(40, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
+    
 
     return 0;
 }
