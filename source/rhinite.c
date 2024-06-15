@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "../packages/menuing/menuing.h"
 #include "../packages/mt19937ar/mt19937ar.h"
-#include "../packages/csv/csv.h"
+#include "../packages/affichage/affichage.h"
 
 #include "./rhinite.h"
 
@@ -245,10 +244,17 @@ int contamination(personne_t * population, int num_personnes, int taille_grille,
     return nb_contamination_heure;
 }
 
-int * launch_sim(int nb_jours, personne_t * population, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination)
+int * launch_sim(int nb_jours, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination, int num_infect_init)
 {
+    personne_t * population = init_population(num_personnes, taille_grille);
+    init_contamination(population, num_infect_init, num_personnes);
+
     // Statistiques sur l'évolution de la contagion
     int * nb_contamination = malloc(nb_jours * sizeof(int));
+    if (nb_contamination == NULL){
+        perror("Erreur allocation nb_contamination");
+        exit(1);
+    }
 
     for (int j = 0; j < nb_jours; j++) 
     {  
@@ -271,52 +277,7 @@ int * launch_sim(int nb_jours, personne_t * population, int taille_grille, int n
 
         evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
     }
+
+    free(population);
     return nb_contamination;
-}
-
-int main() 
-{
-    // Initialisation du générateur de pseudo-aléatoire
-    unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
-    init_by_array(init, length);
-
-
-    // Déclaration constantes programme
-    double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
-
-    // Déclarations variables programme (constantes expérience)
-    int           taille_grille;
-    int           num_personnes;
-    int           duree_incubation; // en jours
-    int           duree_contagion; // en jours
-    int           duree_imunitee; // en jours
-
-    // Déclarations variables programme (variables expérience)
-    personne_t *  population;
-    int           num_infect_init;
-    
-
-    // Initialisation constantes expérience
-    taille_grille = 50;
-    num_personnes = 100;
-    duree_incubation = 2;
-    duree_contagion = 9;
-    duree_imunitee = 45;
-
-
-   
-    for (num_infect_init = 1; num_infect_init <= 10; num_infect_init++)
-    {
-        population = init_population(num_personnes, taille_grille);
-        init_contamination(population, num_infect_init, num_personnes);
-
-        int * stats_contagion = launch_sim(10, population, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination);
-
-        char nom_fichier[50];
-        snprintf(nom_fichier, sizeof(nom_fichier), "infect_init_%d.csv", num_infect_init);
-
-        write_int_array_CSV(nom_fichier, stats_contagion, 10);
-    }
-    
-    return 0;
 }
