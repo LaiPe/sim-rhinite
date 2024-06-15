@@ -3,15 +3,15 @@ OPT = -Wall -g
 all: stats_sim idle
 
 
-stats_sim : source/stats_sim.c rhinite.o csv.o
+stats_sim : source/stats_sim.c rhinite.o csv.o mt19937ar.o affichage.o
 	gcc $(OPT) source/stats_sim.c rhinite.o csv.o mt19937ar.o affichage.o -o stats_sim -lm
 
-idle : source/idle.c rhinite.o menuing.o 
+idle : source/idle.c rhinite.o menuing.o mt19937ar.o affichage.o
 	gcc $(OPT) source/idle.c rhinite.o menuing.o mt19937ar.o affichage.o -o idle
 
 
 
-rhinite.o: source/rhinite.c source/rhinite.h mt19937ar.o affichage.o
+rhinite.o: source/rhinite.c source/rhinite.h 
 	gcc $(OPT) -c source/rhinite.c 
 
 mt19937ar.o: packages/mt19937ar/mt19937ar.c packages/mt19937ar/mt19937ar.h
