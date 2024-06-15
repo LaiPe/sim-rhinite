@@ -1,3 +1,6 @@
 *.o
-rhinite
 out/
+
+# Binaires
+idle
+stats_sim
