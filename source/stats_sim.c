@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "../packages/mt19937ar/mt19937ar.h"
+#include "../packages/affichage/affichage.h"
 #include "../packages/csv/csv.h"
 #include "./rhinite.h"
 
@@ -17,7 +18,7 @@ int main()
 
     // Déclaration constantes programme
     double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
-    int           jours = 5; // un an de simulation
+    int           jours = 365; // un an de simulation
     int           nb_replications = 30;
 
     // Déclarations variables programme (constantes expérience)
@@ -32,7 +33,6 @@ int main()
     
 
     // Initialisation constantes expérience
-    //TODO sélection user scanf
     taille_grille     = 50;
     num_personnes     = 100;
     duree_incubation  = 2;
@@ -44,6 +44,7 @@ int main()
     for (num_infect_init = 1; num_infect_init <= 10; num_infect_init++)
     {
         printf("Simulation w/ num_infect_init=%d :",num_infect_init);
+        fflush(stdout);
 
         // Statistiques sur la propagation de la maladie sur un an
         double **   result_final = malloc(jours * sizeof(double*));
@@ -66,7 +67,7 @@ int main()
             // Lancement de la simulation, récupération du nombre de contaminations par jour sur un an
             temp_stat_contagion[i] = launch_sim(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
             printf("|");
-            fflush(stdin);
+            fflush(stdout);
         }
         printf(" Done !\n");
         //affich_matrice_int(temp_stat_contagion,nb_replications,jours);
