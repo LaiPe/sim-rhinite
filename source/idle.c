@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./rhinite.h"
 #include "../packages/menuing/menuing.h"
+#include "../packages/mt19937ar/mt19937ar.h"
+#include "./rhinite.h"
 
 #define BORDURE "#"
 
@@ -129,6 +130,10 @@ int * launch_idle(int nb_jours, int taille_grille, int num_personnes, int duree_
 
 int main() 
 {
+    // Initialisation du générateur de pseudo-aléatoire
+    unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
+    init_by_array(init, length);
+
     // Déclarations variables simulation
     double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
     int           jours;
@@ -161,17 +166,24 @@ int main()
         if (!strcmp(input,"1"))
         {
             // Initialisation variables simulation
-            jours             = 15;
-
+            jours             = 10;
             taille_grille     = 40;
             num_personnes     = 50;
             duree_incubation  = 2;
             duree_contagion   = 9;
             duree_imunitee    = 15;
-
             num_infect_init   = 5;
 
-            launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);  
+            // Lancement idle avec valeurs par défaut
+            int * contaminations = launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
+
+            // Affichage final avec les statistiques de contaminations
+            printf("Nombre de contaminations par jour :\n");
+            for (int j = 0; j < jours; j++)
+            {
+                printf("Jour %d : %d\n", j+1, contaminations[j]);
+            }
+            get_pause_input();
 
         }
         else if (!strcmp(input,"2"))
