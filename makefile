@@ -1,4 +1,4 @@
-OPT = -Wall -g
+OPT = -Wall -Wextra -pg
 
 all: stats_sim idle
 

@@ -88,7 +88,7 @@ personne_t * init_population(int num_personnes, int taille_grille)
 
 
 // Fonction pour vérifier si une position est occupée
-bool position_occupee(personne_t * population, int num_personnes, int x, int y, int taille_grille) 
+bool position_occupee(personne_t * population, int num_personnes, int x, int y) 
 {
     for (int i = 0; i < num_personnes; i++) 
     {
@@ -111,7 +111,7 @@ void deplacement_alea(personne_t * population, int num_personnes, int taille_gri
         // Droite
         nouvelle_x = (population[i].x + 1) % taille_grille;
         nouvelle_y = population[i].y;
-        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y)) 
         {
             directions_possibles[0] = false;
             nb_directions_possibles--;
@@ -120,7 +120,7 @@ void deplacement_alea(personne_t * population, int num_personnes, int taille_gri
         // Gauche
         nouvelle_x = (population[i].x - 1 + taille_grille) % taille_grille;
         nouvelle_y = population[i].y;
-        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y)) 
         {
             directions_possibles[1] = false;
             nb_directions_possibles--;
@@ -129,7 +129,7 @@ void deplacement_alea(personne_t * population, int num_personnes, int taille_gri
         // Haut
         nouvelle_x = population[i].x;
         nouvelle_y = (population[i].y + 1) % taille_grille;
-        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y)) 
         {
             directions_possibles[2] = false;
             nb_directions_possibles--;
@@ -138,7 +138,7 @@ void deplacement_alea(personne_t * population, int num_personnes, int taille_gri
         // Bas
         nouvelle_x = population[i].x;
         nouvelle_y = (population[i].y - 1 + taille_grille) % taille_grille;
-        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y, taille_grille)) 
+        if (position_occupee(population, num_personnes, nouvelle_x, nouvelle_y)) 
         {
             directions_possibles[3] = false;
             nb_directions_possibles--;
