@@ -29,4 +29,4 @@ affichage.o: packages/affichage/affichage.c packages/affichage/affichage.h
 
 
 clean:
-	rm -rf *.o *.out rhinite stats_sim out/
+	rm -rf *.o *.out stats_sim idle out/
