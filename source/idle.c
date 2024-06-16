@@ -59,7 +59,7 @@ void affich_population(int taille_grille, personne_t * population, int num_perso
         printf(BORDURE);
         for (int j = 0; j < taille_grille; j++)
         {
-            if (i == population_ordone[c].x && j == population_ordone[c].y)
+            if (c < num_personnes && i == population_ordone[c].x && j == population_ordone[c].y)
             {
                 printf("%d",population_ordone[c].etat);
                 c++;
@@ -148,11 +148,13 @@ int main()
 
 
     // Menu principal
-    accepted_inputs * princ_ai = init_AI(3, 1);
-    add_input(princ_ai, 0, "1", "Valeurs par défaut");
-    add_input(princ_ai, 1, "2", "Valeurs personnalisées");
-    add_input(princ_ai, 2, "q", "Quitter");
-    int conti = 1;
+    accepted_inputs * princ_ai = init_AI(4, 1);
+    add_input(princ_ai, 0, "1", "Vérification colisions");
+    add_input(princ_ai, 1, "2", "Valeurs par défaut");
+    add_input(princ_ai, 2, "3", "Valeurs personnalisées");
+    add_input(princ_ai, 3, "q", "Quitter");
+    int     conti = 1;
+    
 
     while (conti) 
     {
@@ -161,13 +163,28 @@ int main()
         affich_menu(princ_ai, 1, 1);
 
         // Récupération input user
-        char * input = get_user_input(princ_ai);
+        char *  input = get_user_input(princ_ai);
 
         if (!strcmp(input,"1"))
         {
             // Initialisation variables simulation
-            jours             = 10;
-            taille_grille     = 40;
+            jours             = 1;
+            taille_grille     = 2;
+            num_personnes     = 2;
+            duree_incubation  = 2;
+            duree_contagion   = 9;
+            duree_imunitee    = 15;
+            num_infect_init   = 1;
+
+            // Lancement idle avec valeurs par défaut
+            launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
+
+        }
+        else if (!strcmp(input,"2"))
+        {
+            // Initialisation variables simulation
+            jours             = 15;
+            taille_grille     = 30;
             num_personnes     = 50;
             duree_incubation  = 2;
             duree_contagion   = 9;
@@ -183,10 +200,11 @@ int main()
             {
                 printf("Jour %d : %d\n", j+1, contaminations[j]);
             }
-            get_pause_input();
 
+            free(contaminations);
+            get_pause_input();
         }
-        else if (!strcmp(input,"2"))
+        else if (!strcmp(input,"3"))
         {
             printf("WIP\n");
             get_pause_input();
@@ -195,7 +213,10 @@ int main()
         {
             conti = 0;
         }
+
+        free(input);
     }
     
-
+    free_AI(princ_ai);
+    return 0;
 }
