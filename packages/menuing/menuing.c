@@ -37,7 +37,7 @@ accepted_inputs * init_AI(int num_inputs, int size_max_input)
     for (int i = 0; i < num_inputs; i++) 
     {   
         // Allocation input (au sens suite de caractère symbolique)
-        ai->inputs[i].symb = malloc(size_max_input * sizeof(char));
+        ai->inputs[i].symb = malloc(size_max_input + 1 * sizeof(char)); // +1 pour le caractère final \0
         if (ai->inputs[i].symb == NULL) {
             fprintf(stderr,"Erreur d'allocation de mémoire : ai->inputs[%d].symb",i);
 
@@ -178,6 +178,6 @@ void get_pause_input()
     char * buffer = malloc(40 * sizeof(char));
     scanf(" %s",buffer);
     
-    clear();
     free(buffer);
+    clear();
 }
