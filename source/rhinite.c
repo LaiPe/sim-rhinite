@@ -3,7 +3,6 @@
 #include <stdbool.h>
 
 #include "../packages/mt19937ar/mt19937ar.h"
-#include "../packages/affichage/affichage.h"
 
 #include "./rhinite.h"
 

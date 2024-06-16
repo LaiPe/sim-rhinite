@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include "../packages/mt19937ar/mt19937ar.h"
-#include "../packages/affichage/affichage.h"
 #include "../packages/csv/csv.h"
 #include "./rhinite.h"
 
@@ -70,7 +69,6 @@ int main()
             fflush(stdout);
         }
         printf(" Done !\n");
-        //affich_matrice_int(temp_stat_contagion,nb_replications,jours);
         
         for (int j = 0; j < jours; j++)
         {
@@ -97,8 +95,6 @@ int main()
             result_final[j] = malloc(2 * sizeof(double));
             result_final[j][0] = moyenne - marge_erreur;
             result_final[j][1] = moyenne + marge_erreur;
-
-            //affich_matrice_double(result_final,j,2);
         }
 
 
