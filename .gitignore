@@ -5,3 +5,9 @@ out/
 # Binaires
 idle
 stats_sim
+
+# Latex
+*.aux
+*.log
+*.synctex.gz
+*.toc
