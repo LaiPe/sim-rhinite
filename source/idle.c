@@ -149,7 +149,7 @@ int main()
 
     // Menu principal
     accepted_inputs * princ_ai = init_AI(4, 1);
-    add_input(princ_ai, 0, "1", "Vérification colisions");
+    add_input(princ_ai, 0, "1", "Vérification collisions");
     add_input(princ_ai, 1, "2", "Valeurs par défaut");
     add_input(princ_ai, 2, "3", "Valeurs personnalisées");
     add_input(princ_ai, 3, "q", "Quitter");
