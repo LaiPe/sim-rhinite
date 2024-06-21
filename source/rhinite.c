@@ -176,7 +176,7 @@ void init_contamination(personne_t * population, int nb_initial_contamines, int 
     }
 }
 
-void evolution_journaliere_maladie(personne_t * population, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee)
+void evolution_journaliere_maladie(personne_t * population, int num_personnes, int duree_incubation, int duree_contagion, int duree_immunite)
 {
     for (int i = 0; i < num_personnes; i++)
     {
@@ -195,7 +195,7 @@ void evolution_journaliere_maladie(personne_t * population, int num_personnes, i
         {
             population[i].etat = GUERI;
         } 
-        else if (population[i].etat == GUERI && population[i].jour_infection > (duree_incubation + duree_contagion + duree_imunitee))
+        else if (population[i].etat == GUERI && population[i].jour_infection > (duree_incubation + duree_contagion + duree_immunite))
         {
             population[i].etat = SAIN;
             population[i].jour_infection = 0;
@@ -243,7 +243,7 @@ int contamination(personne_t * population, int num_personnes, int taille_grille,
     return nb_contamination_heure;
 }
 
-int * launch_sim(int nb_jours, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination, int num_infect_init)
+int * launch_sim(int nb_jours, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_immunite, double * proba_contamination, int num_infect_init)
 {
     personne_t * population = init_population(num_personnes, taille_grille);
     init_contamination(population, num_infect_init, num_personnes);
@@ -274,7 +274,7 @@ int * launch_sim(int nb_jours, int taille_grille, int num_personnes, int duree_i
 
         nb_contamination[j] = nb_contamination_jour;
 
-        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
+        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_immunite);
     }
 
     free(population);
