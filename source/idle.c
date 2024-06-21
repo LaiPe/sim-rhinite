@@ -81,7 +81,7 @@ void affich_population(int taille_grille, personne_t * population, int num_perso
     free(population_ordone);
 }
 
-int * launch_idle(int nb_jours, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_imunitee, double * proba_contamination, int num_infect_init)
+int * launch_idle(int nb_jours, int taille_grille, int num_personnes, int duree_incubation, int duree_contagion, int duree_immunite, double * proba_contamination, int num_infect_init)
 {
     personne_t * population = init_population(num_personnes, taille_grille);
     init_contamination(population, num_infect_init, num_personnes);
@@ -121,7 +121,7 @@ int * launch_idle(int nb_jours, int taille_grille, int num_personnes, int duree_
             get_pause_input();
         }
         nb_contamination[j] = nb_contamination_jour;
-        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_imunitee);
+        evolution_journaliere_maladie(population, num_personnes, duree_incubation, duree_contagion, duree_immunite);
     }
 
     free(population);
@@ -142,7 +142,7 @@ int main()
     int           num_personnes;
     int           duree_incubation; // en jours
     int           duree_contagion; // en jours
-    int           duree_imunitee; // en jours
+    int           duree_immunite; // en jours
 
     int           num_infect_init;
 
@@ -173,11 +173,11 @@ int main()
             num_personnes     = 2;
             duree_incubation  = 2;
             duree_contagion   = 9;
-            duree_imunitee    = 15;
+            duree_immunite   = 15;
             num_infect_init   = 1;
 
             // Lancement idle avec valeurs par défaut
-            launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
+            launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_immunite, proba_contamination, num_infect_init);
 
         }
         else if (!strcmp(input,"2"))
@@ -188,11 +188,11 @@ int main()
             num_personnes     = 50;
             duree_incubation  = 2;
             duree_contagion   = 9;
-            duree_imunitee    = 15;
+            duree_immunite    = 15;
             num_infect_init   = 5;
 
             // Lancement idle avec valeurs par défaut
-            int * contaminations = launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
+            int * contaminations = launch_idle(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_immunite, proba_contamination, num_infect_init);
 
             // Affichage final avec les statistiques de contaminations
             printf("Nombre de contaminations par jour :\n");

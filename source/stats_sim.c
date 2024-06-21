@@ -16,27 +16,24 @@ int main()
 
 
     // Déclaration constantes programme
-    double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
-    int           jours = 365; // un an de simulation
-    int           nb_replications = 30;
+    double        proba_contamination[12]   = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
+    int           duree_incubation          = 2; // en jours
+    int           duree_contagion           = 9; // en jours
+    int           jours                     = 365; // un an de simulation
+    int           nb_replications           = 30;
 
     // Déclarations variables programme (constantes expérience)
     int           taille_grille;
     int           num_personnes;
-    int           duree_incubation; // en jours
-    int           duree_contagion; // en jours
-    int           duree_imunitee; // en jours
+    int           duree_immunite; // en jours
 
     // Déclaration variable programme (variable expérience)
     int           num_infect_init;
     
-
     // Initialisation constantes expérience
-    taille_grille     = 100;
-    num_personnes     = 500;
-    duree_incubation  = 2;
-    duree_contagion   = 9;
-    duree_imunitee    = 30;
+    taille_grille     = 50;
+    num_personnes     = 100;
+    duree_immunite    = 10;
 
 
     // Pour chaque valeur de notre variable d'experience : [1,2,...,10]
@@ -64,7 +61,7 @@ int main()
         for (int i = 0; i < nb_replications; i++)
         {
             // Lancement de la simulation, récupération du nombre de contaminations par jour sur un an
-            temp_stat_contagion[i] = launch_sim(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_imunitee, proba_contamination, num_infect_init);
+            temp_stat_contagion[i] = launch_sim(jours, taille_grille, num_personnes, duree_incubation, duree_contagion, duree_immunite, proba_contamination, num_infect_init);
             printf("|");
             fflush(stdout);
         }
