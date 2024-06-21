@@ -282,15 +282,16 @@ duree_contagion   = 9;
 duree_imunitee    = 15;
 \end{lstlisting}
 
+Les valeurs de constantes présentées ici représentent les valeurs par défaut du programme et correspondent à celles indiquées dans le sujet. Nous appellerons désormais cette collection de valeurs "\textbf{default}" et elle servira de base dans notre travail d'analyse (cf. \ref{sec:analyse})\\
+
 Ensuite, le programme boucle pour chaque valeur de \textbf{num\_infect\_init} de 1 à 10 (inclus). Pour chaque itération de la boucle, une seconde boucle est définie. Son nombre d'itération est égal à la valeur de \textbf{nb\_replications} (dans notre cas, 30). 
 
 Ainsi, pour chaque itération de la seconde boucle, un appel à \textbf{launch\_sim} est effectué et le tableau retourné par cette dernière est stocké dans un tableau de pointeurs initialisé en amont. Au terme de la seconde boucle, le tableau de pointeurs contient donc 30 tableaux d'entiers qui contiennent chacun $j$ entiers, avec $j$ la durée de la simulation exprimée en jours (cf. constante \textbf{jours}).
 
-\newpage
 
 Le programme exploite ce tableau de pointeur pour réaliser des calculs statistiques. Pour chaque jour, il calcule le nombre de contamination moyen des 30 réplications, leur écart-type et à partir de cela, un intervalle de confiance à 95\%. L'intervalle est stocké dans un second tableau ayant une taille égale à $j$.
 
-Enfin, le programme inscrit ce tableau d'intervalles dans un ficher formaté CSV avec un nom indiquant la valeur de \textbf{num\_infect\_init} avec laquelle la simulation a tournée. Ceci conclu une itération de la première boucle.
+Enfin, le programme inscrit ce tableau d'intervalles dans un ficher formaté CSV avec un nom indiquant la valeur de \textbf{num\_infect\_init} avec laquelle la simulation a tournée. Ceci conclu une itération de la première boucle. Une fois cette dernière finie, le programme se termine.
 
 \subsubsection{idle}
 Le programme \textbf{idle} est une annexe permettant de visualiser le comportement de la population simulée. Il utilise une fonction nommée \textbf{launch\_idle} qui correspond à une "redéfinition" de la fonction \textbf{launch\_sim} auquel des affichages dans le terminal ont étés ajoutés.\\
@@ -320,10 +321,46 @@ Ensuite, elle affiche une bordure supérieure en utilisant le caractère '\#'. P
 
 Finalement, une bordure inférieure est affichée. La fonction libère ensuite la mémoire allouée pour la copie triée de la population.
 
+\newpage
+
 \section{Analyse des résultats}
+\label{sec:analyse}
+
+\newpage
 
 \section{Annexes}
 
+\subsection{Graphiques}
 
+\newpage
+\subsection{Script de création des graphiques}
+Afin de m'aider à réaliser les graphiques utilisés dans cette rédaction, j'ai écrit un petit script en Python nommé \textbf{graphiques.py}, que vous pouvez retrouver dans le répertoire \textbf{redaction/}. 
+
+Il est conçu pour générer un graphique représentant des intervalles de confiance à partir de données stockées dans un fichier CSV. Il fonctionne en important les packages \textbf{pandas} et \textbf{matplotlib.pyplot} qui servent respectivement à la manipulation de données et à la création de graphiques.\\
+
+Le script prévoit l'usage d'arguments par ligne de commande. Seul le premier argument passé après le nom du script compte et est interprété comme le nom du répertoire dans lequel les fichiers des graphiques seront crées.
+
+Des constantes sont définies pour indiquer où le script doit lire les fichiers CSV et où il doit créer les fichiers contenant les graphiques. Il lit donc les fichiers CSV crées par \textbf{stats\_sim} qui se situent dans le répertoire \textbf{out/} et dessine ses graphiques dans le répertoire \textbf{redaction/graphiques/}. L'argument passé par ligne de commande définit alors le sous-répertoire dans lequel les fichiers seront crées, tel que \textbf{redaction/graphiques/sous-repertoire/}.\\
+
+Ensuite, le script définit et fait appel à une fonction nommée \textbf{draw}. Comme son nom l'indique, c'est elle qui est chargée de créer un fichier et de dessiner dedans un graphique correspondant à un fichier CSV. Elle prend comme paramètres un DataFrame (df) contenant les bornes inférieures et supérieures des intervalles de confiance, un titre pour le graphique, le chemin (path\_file) où enregistrer le graphique, et le nom du fichier (file\_name). Elle crée un graphique avec deux lignes (pour les bornes inférieure et supérieure) et une zone remplie entre elles, représentant les intervalles de confiance.
+
+Le script fait appel à \textbf{draw} pour chaque fichier source CSV afin de créer un graphique par fichier source. Chaque appel est précédé par la création d'un DataFrame où les données de la première colonne du fichier csv sont contenues dans un champ correspondant à la borne inférieure et la seconde colonne dans un champ correspondant à la borde supérieure. L'appel se fait donc avec ce DataFrame en argument.
+
+\newpage
+
+
+
+
+
+\subsection{Crédits et liens externes}
+Projet et rédaction réalisé par Léo Peyronnet
+\begin{itemize}
+\item Portfolio - \underline{\href{https://portfolio.leopeyronnet.fr/}{https://portfolio.leopeyronnet.fr/}}
+\item Email - \underline{\href{mailto:peyronnet.leo@gmail.com}{peyronnet.leo@gmail.com}}\\
+\end{itemize}
+
+Le dépôt distant du projet est trouvable sur Github à cette adresse :
+
+\underline{\href{https://github.com/LaiPe/sim-rhinite}{https://github.com/LaiPe/sim-rhinite}}
 
 \end{document}
