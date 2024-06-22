@@ -9,6 +9,10 @@
 % Package liens
 \usepackage{hyperref}
 
+% Package graphiques et images
+\usepackage{graphicx} 
+\usepackage{float}
+
 % Police principale
 \usepackage{mathptmx}
 
@@ -135,7 +139,7 @@ Dans le sujet, rien n'est explicité quant à l'état d'une personne contaminée
 
 Suite à la consultation du responsable de l'enseignement, un compromis a été décidé. Au terme de sa période de contamination, la personne est considérée comme guérie pendant une durée établie, puis au terme de cette dernière, la personne est reconsidéré comme saine (et donc contaminable).
 
-Nous reviendrons ultérieurement sur le choix de valeur de cette durée d'immunité.
+Nous reviendrons ultérieurement sur le choix de valeur de cette durée d'immunité (cf. \ref{sec:analyse}).
 
 \newpage
 
@@ -150,7 +154,7 @@ La simulation a été implémentée par un programme écrit en langage C. Le ré
 Dans le sujet, il est demandé d'utiliser “le meilleur générateur de nombre pseudo-aléatoire vu en cours”. Conformément à ce que l'on a vu en cours et en TP, j'ai choisi le \textbf{Mersenne Twister} dans son implémentation MT 19937. Ainsi, dans la suite de cette rédaction, tous les appels à l'aléatoire sont à comprendre comme des appels à ce générateur.
 
 \subsubsection{Format des résultats finaux}
-Le programme doit produire des données statistiques sur la simulation. J'ai choisi le format \textbf{CSV} pour stocker ces résultats, notamment pour ma familiarité avec ce format, sa simplicité et la possibilité d'être lu par des outils type tableurs que j'ai utilisé pour la création de visuels (diagrammes, courbes, etc...).
+Le programme doit produire des données statistiques sur la simulation. J'ai choisi le format \textbf{CSV} pour stocker ces résultats, notamment pour ma familiarité avec ce format, sa simplicité et la possibilité d'être lu facile par des outils que j'ai utilisé pour la création de visuels (cf. \ref{sec:script_graph}).
 
 Les fichiers ainsi crées par le programme seront placés dans un répertoire spécial situé à la racine et nommé \textbf{out/}.
 
@@ -255,34 +259,33 @@ Enfin, au terme de chaque jour, la somme des contaminations qui ont eu lieu dans
 
 \subsection{Programmes exécutables}
 \subsubsection{stats\_sim}
+\label{sec:stats_sim}
 Le programme \textbf{stats\_sim} fait appel à \textbf{launch\_sim} afin de produire des statistiques sur l'évolution de la contamination de la maladie en fonction du nombre d'infectés initiaux.
 
-Après avoir initialisé le générateur de pseudo-aléatoire, le programme initialise et défini l'ensemble des valeurs et constantes du programme :
+Après avoir initialisé le générateur de pseudo-aléatoire, le programme initialise et défini l'ensemble des variables et constantes du programme :
 \begin{lstlisting}
 // Déclaration constantes programme
-double        proba_contamination[12] = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
-int           jours = 365; // un an de simulation
-int           nb_replications = 30;
+    double        proba_contamination[12]   = {0, 0, 0, 0.6, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
+    int           duree_incubation          = 2; // en jours
+    int           duree_contagion           = 9; // en jours
+    int           jours                     = 365; // un an de simulation
+    int           nb_replications           = 30;
 
-// Déclarations variables programme (constantes expérience)
-int           taille_grille;
-int           num_personnes;
-int           duree_incubation; // en jours
-int           duree_contagion; // en jours
-int           duree_imunitee; // en jours
+    // Déclarations variables programme (constantes expérience)
+    int           taille_grille;
+    int           num_personnes;
+    int           duree_immunite; // en jours
 
-// Déclaration variable programme (variable expérience)
-int           num_infect_init;
-
-// Initialisation constantes expérience
-taille_grille     = 50;
-num_personnes     = 100;
-duree_incubation  = 2;
-duree_contagion   = 9;
-duree_imunitee    = 15;
+    // Déclaration variable programme (variable expérience)
+    int           num_infect_init;
+    
+    // Initialisation constantes expérience
+    taille_grille     = 50;
+    num_personnes     = 100;
+    duree_imunitee    = 15;
 \end{lstlisting}
 
-Les valeurs de constantes présentées ici représentent les valeurs par défaut du programme et correspondent à celles indiquées dans le sujet. Nous appellerons désormais cette collection de valeurs "\textbf{default}" et elle servira de base dans notre travail d'analyse (cf. \ref{sec:analyse})\\
+Les valeurs présentées ici représentent les valeurs par défaut du programme et correspondent à celles indiquées dans le sujet. Nous appellerons désormais cette collection de valeurs "\textbf{default}" et elle servira de base dans notre travail d'analyse (cf. \ref{sec:analyse})\\
 
 Ensuite, le programme boucle pour chaque valeur de \textbf{num\_infect\_init} de 1 à 10 (inclus). Pour chaque itération de la boucle, une seconde boucle est définie. Son nombre d'itération est égal à la valeur de \textbf{nb\_replications} (dans notre cas, 30). 
 
@@ -326,14 +329,128 @@ Finalement, une bordure inférieure est affichée. La fonction libère ensuite l
 \section{Analyse des résultats}
 \label{sec:analyse}
 
+Cette partie rassemble mes analyses sur certains résultats de simulations que j'ai produit avec \textbf{stats\_sim}. Les représentations visuelles de ces résultats ont été obtenu grâce à un script dont je détaille le fonctionnement en annexe (cf. \ref{sec:script_graph}). 
+
+\subsection{Présentation des simulations}
+Commençons cette analyse par une définition des différentes simulations sélectionnées :
+\begin{itemize}
+\item \textbf{default} : correspond au valeurs de constantes d'expérience par défaut du programme \textbf{stats\_sim} (cf. \ref{sec:stats_sim}).
+\begin{itemize}
+\item taille\_grille = 50
+\item num\_personnes = 100
+\item duree\_imunite = 15
+\end{itemize}
+
+\item \textbf{default-sans-imunite} : correspond à la simulation \textbf{default} dont la valeur de duree\_imunitee est nulle.
+
+
+\item \textbf{default-duree-immunite-10} : correspond à la simulation \textbf{default} dont la valeur de duree\_imunitee a été abaissée à 10.
+
+\item \textbf{default-duree-immunite-10-replic-300} : correspond à la simulation \textbf{default-duree-immunite-10} dont le nombre de réplications a été multiplié par 10.\\
+
+
+\item \textbf{max} : correspond à la plus grosse simulation effectué.
+\begin{itemize}
+\item taille\_grille = 100
+\item num\_personnes = 500
+\item duree\_imunite = 15
+\end{itemize}
+
+\item \textbf{max-duree-imunite-30} : correspond à la simulation \textbf{max} dont la valeur de duree\_imunitee a été augmentée à 30.
+
+\end{itemize}
+
+\newpage
+
+\subsection{Vagues de contamination}
+
+Au travers des résultats des simulations \textbf{default-duree-immunite-10}, \textbf{default-sans-immunite} et \textbf{max}, il est possible d'observer une ondulation des courbes représentatives de l'intervalle de confiance du nombre de contamination par jour. (cf. fig. \ref{fig:default-duree-immunite-10-num_infect_init_1}, \ref{fig:default-sans-immunite-num_infect_init_1} et \ref{fig:max-num_infect_init_1})\\
+
+La période de ces ondulations semble corrélée à la durée d'un cycle complet de la maladie, c'est à dire la somme de la durée d'incubation, de la durée de contamination et la durée d'immunité. En effet, on peut observer entre les exemples cités précédemment une différence de longueur de leur période d'ondulation. Une simulation possédant un cycle de maladie court comme \textbf{default-sans-immunite} (cf. fig. \ref{fig:default-sans-immunite-num_infect_init_1}) avec un cycle de $2+9 = 11$ jours a une période d'ondulation beaucoup plus courte que \textbf{max} (cf. fig. \ref{fig:max-num_infect_init_1}) par exemple avec son cycle de $2+9+15 = 26$ jours.
+
+Cette observation peut être confirmée par la légère différence de période entre \textbf{default-duree-immunite-10} (cf. fig. \ref{fig:default-duree-immunite-10-num_infect_init_1}) et \textbf{max} (cf. fig. \ref{fig:max-num_infect_init_1}). La première possède un cycle de maladie de $2+9+10 = 21$ jours alors que la seconde, comme vu précédemment, possède un cycle de 26 jours. Cette différence peut effectivement s'observer sur leur période d'ondulation, avec \textbf{max} qui possède une période légèrement plus grande que \textbf{default-duree-immunite-10}.\\
+
+De plus, il est possible d'observer un "brouillage" de la tendance d'ondulation au fil du temps. Dans les simulations citées précédemment, on peut effectivement observer un élargissement de l'intervalle de confiance (et donc une augmentation de l'aire entre les deux courbes formées par les intervalles) à chaque pic de contamination. Prenons l'exemple de la simulation \textbf{default-duree-immunite-10} (cf. fig. \ref{fig:default-duree-immunite-10-num_infect_init_1}), où l'on peut bien voir ce phénomène. Les premiers pics sont décrits par un intervalle relativement restreint, et au fur et à mesure des jours et des pics, l'intervalle s'élargit jusqu'à rendre quasiment indiscernable le phénomène d'ondulation.
+
+Cet élargissement de l'intervalle de confiance peut être interprété comme le signe d'une intensification de l'hétérogénéité des résultats entre les réplications. Autrement dit, avec 30 réplications, il devient au bout d'un certain nombre de jours difficile d'établir une tendance nette du comportement de la contamination. La simulation \textbf{default-duree-immunite-10-replic-300} permet de démontrer cela en augmentant significativement le nombre de réplications. En comparant avec \textbf{default-duree-immunite-10} dans un scénario où seul le nombre de réplications des deux simulations varient (fig. \ref{fig:default-duree-immunite-10-num_infect_init_1} et fig. \ref{fig:default-duree-immunite-10-replic-300-num_infect_init_1}), on voit que le phénomène de "brouillage" est considérablement réduit (sans pour autant être complètement résorbé), permettant ainsi de découvrir avec une plus grande précision la tendance de contamination journalière de cette simulation.\\
+
+Ainsi, le phénomène d'ondulation peut être compris comme l'alternance d'une population d'un état infecté à un état guéri. Cette alternance nécessite un équilibre fin pour qu'une partie de la population soit contaminable lorsque le nombre de contamination décroit, afin de permettre le départ d'un nouveau pic épidémique.
+
+
+\subsection{Saturation de la population}
+Dans la plupart des autres configurations de simulation présentées, la maladie se propage suite à l'infection initiale, mais voit aussitôt son nombre de contamination par jour s'effondrer et tomber à 0. Ceci est observable avec  \textbf{default}, \textbf{default-duree-immunite-10}, \textbf{max} et \textbf{max-duree-immunite-30}.
+
+Selon moi, ce phénomène est assimilable à une saturation de la population, c'est à dire que la maladie contamine trop rapidement la population pour qu'une partie de la population soit contaminable lorsque le nombre de contamination décroit. J'ai pu déceler ce que je pense être deux raisons de saturation de la population.\\
+
+Un nombre d'infectés initiaux trop élevé peut être un facteur de saturation de la population. Nous pouvons l'observer avec \textbf{default-duree-immunite-10} et \textbf{max} qui sont des simulations qui ondulent dans des scénarios où le nombre d'infectés initiaux est faible (cf fig. \ref{fig:default-duree-immunite-10-num_infect_init_1} et fig. \ref{fig:max-num_infect_init_1}) et qui pourtant saturent lorsque le nombre d'infectés initiaux est plus important (cf. fig. \ref{fig:default-duree-immunite-10-num_infect_init_5} et \ref{fig:max-num_infect_init_8}).\\
+
+Une durée d'immunité à la maladie trop élevée peut également être un facteur de saturation de la population. Nous pouvons l'observer avec \textbf{default} (cf. fig. \ref{fig:default-num_infect_init_1}) et \textbf{max-duree-immunite-30} (cf. fig. \ref{fig:max-duree-immunite-30-num_infect_init_1}). De plus, on peut également comparer \textbf{default} avec \textbf{default-duree-immunite-10} (cf. fig. \ref{fig:default-duree-immunite-10-num_infect_init_1}), dont juste la durée d'immunité varie. À nombre d'infectés initiaux égal, \textbf{default} sature alors que \textbf{default-duree-immunite-10} ondule.  
+
 \newpage
 
 \section{Annexes}
 
 \subsection{Graphiques}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/default/num_infect_init_1.png}
+    \caption{default - num\_infect\_init\_1}
+    \label{fig:default-num_infect_init_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/default-duree-immunite-10/num_infect_init_1.png}
+    \caption{default-duree-immunite-10 - num\_infect\_init\_1}
+    \label{fig:default-duree-immunite-10-num_infect_init_1}
+\end{figure} 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/default-duree-immunite-10/num_infect_init_5.png}
+    \caption{default-duree-immunite-10 - num\_infect\_init\_5}
+    \label{fig:default-duree-immunite-10-num_infect_init_5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/default-duree-immunite-10-replic-300/num_infect_init_1.png}
+    \caption{default-duree-immunite-10-replic-300 - num\_infect\_init\_1}
+    \label{fig:default-duree-immunite-10-replic-300-num_infect_init_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/default-sans-immunite/num_infect_init_1.png}
+    \caption{default-sans-immunite - num\_infect\_init\_1}
+    \label{fig:default-sans-immunite-num_infect_init_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/max/num_infect_init_1.png}
+    \caption{max - num\_infect\_init\_1}
+    \label{fig:max-num_infect_init_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/max/num_infect_init_8.png}
+    \caption{max - num\_infect\_init\_8}
+    \label{fig:max-num_infect_init_8}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphiques/max-duree-immunite-30/num_infect_init_1.png}
+    \caption{max-duree-immunite-30 - num\_infect\_init\_1}
+    \label{fig:max-duree-immunite-30-num_infect_init_1}
+\end{figure}
 
 \newpage
+
 \subsection{Script de création des graphiques}
+\label{sec:script_graph}
 Afin de m'aider à réaliser les graphiques utilisés dans cette rédaction, j'ai écrit un petit script en Python nommé \textbf{graphiques.py}, que vous pouvez retrouver dans le répertoire \textbf{redaction/}. 
 
 Il est conçu pour générer un graphique représentant des intervalles de confiance à partir de données stockées dans un fichier CSV. Il fonctionne en important les packages \textbf{pandas} et \textbf{matplotlib.pyplot} qui servent respectivement à la manipulation de données et à la création de graphiques.\\
