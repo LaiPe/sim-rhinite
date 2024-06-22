@@ -33,7 +33,7 @@ int main()
     // Initialisation constantes expérience
     taille_grille     = 50;
     num_personnes     = 100;
-    duree_immunite    = 10;
+    duree_immunite    = 15;
 
 
     // Pour chaque valeur de notre variable d'experience : [1,2,...,10]
