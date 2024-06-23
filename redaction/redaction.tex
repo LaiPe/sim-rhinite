@@ -92,7 +92,7 @@ Les objectifs spécifiques de cette simulation sont les suivants :
 
 \item \textbf{Modélisation la population et l'espace de simulation}
 \begin{itemize}
-\item Création une grille 2D torique pour représenter l'espace dans lequel les individus se déplacent.
+\item Création d'une grille 2D torique pour représenter l'espace dans lequel les individus se déplacent.
 \item Initialisation d'une population avec des positions aléatoires sur cette grille.
 \end{itemize}
 
@@ -154,7 +154,7 @@ La simulation a été implémentée par un programme écrit en langage C. Le ré
 Dans le sujet, il est demandé d'utiliser “le meilleur générateur de nombre pseudo-aléatoire vu en cours”. Conformément à ce que l'on a vu en cours et en TP, j'ai choisi le \textbf{Mersenne Twister} dans son implémentation MT 19937. Ainsi, dans la suite de cette rédaction, tous les appels à l'aléatoire sont à comprendre comme des appels à ce générateur.
 
 \subsubsection{Format des résultats finaux}
-Le programme doit produire des données statistiques sur la simulation. J'ai choisi le format \textbf{CSV} pour stocker ces résultats, notamment pour ma familiarité avec ce format, sa simplicité et la possibilité d'être lu facile par des outils que j'ai utilisé pour la création de visuels (cf. \ref{sec:script_graph}).
+Le programme doit produire des données statistiques sur la simulation. J'ai choisi le format \textbf{CSV} pour stocker ces résultats, notamment pour ma familiarité avec ce format, sa simplicité et la possibilité d'être lu facilement par les outils que j'ai utilisé pour la création de visuels (cf. \ref{sec:script_graph}).
 
 Les fichiers ainsi crées par le programme seront placés dans un répertoire spécial situé à la racine et nommé \textbf{out/}.
 
@@ -224,7 +224,7 @@ Le fichier \textbf{rhinite.c} permet l'initialisation d'une population grâce à
 Une autre fonction nommée \textbf{init\_contamination} permet de définir dans une population les individus qui seront les infectés initiaux. Pour rappel, leur nombre correspond à notre variable d'expérience (cf. \ref{sec:objectifs}). La sélection de ces individus parmi la population se fait de manière aléatoire.   
 
 
-\subsection{Fonctions métier}
+\subsection{Fonctions métiers}
 Le fichier \textbf{rhinite.c} implémente également plusieurs autres fonctions permettant de manipuler une population.
 
 \subsubsection{deplacement\_alea}
@@ -247,7 +247,7 @@ Cette fonction comptabilise également le nombre de contaminations réalisées d
 \subsection{Fonction launch\_sim}
 La fonction \textbf{launch\_sim} permet de réaliser une simulation complète suivant des paramètres donnés et fait appel à l'ensemble des fonctions présentées précédemment. Elle permet notamment de leur apporter un contexte temporel. 
 
-Ainsi, elle commence par faire appel aux fonctions d'initialisation ; d'abord \textbf{init\_population} qui lui renvoie un tableau de personnes, puis \textbf{init\_contamination} qui prends, entre autres paramètres, ce tableau.
+Ainsi, elle commence par faire appel aux fonctions d'initialisation ; d'abord \textbf{init\_population} qui lui renvoie un tableau de personnes, puis \textbf{init\_contamination} qui prend, entre autres paramètres, ce tableau.
 
 Ensuite, pour chaque jour prévu dans la simulation, elle lance un cycle de 24 heures à l'intérieur duquel, pour chaque heure, est fait appel à la fonction \textbf{contamination}, et si l'heure est comprise entre 6 heures et 22 heures, un appel à la fonction \textbf{deplacement\_alea}.
 
@@ -297,13 +297,13 @@ Le programme exploite ce tableau de pointeur pour réaliser des calculs statisti
 Enfin, le programme inscrit ce tableau d'intervalles dans un ficher formaté CSV avec un nom indiquant la valeur de \textbf{num\_infect\_init} avec laquelle la simulation a tournée. Ceci conclu une itération de la première boucle. Une fois cette dernière finie, le programme se termine.
 
 \subsubsection{idle}
-Le programme \textbf{idle} est une annexe permettant de visualiser le comportement de la population simulée. Il utilise une fonction nommée \textbf{launch\_idle} qui correspond à une "redéfinition" de la fonction \textbf{launch\_sim} auquel des affichages dans le terminal ont étés ajoutés.\\
+Le programme \textbf{idle} est une annexe permettant de visualiser le comportement de la population simulée. Il utilise une fonction nommée \textbf{launch\_idle} qui correspond à une "redéfinition" de la fonction \textbf{launch\_sim} auquel des affichages dans le terminal ont été ajoutés.\\
 
 \textbf{idle} démarre avec un menu donnant à l'utilisateur le choix entre plusieurs modes de lancement du programme :
 \begin{itemize}
 \item Vérification collisions : lance une simulation de un seul jour dans une grille minime (2x2) afin de visualiser le fonctionnement de la fonction métier \textbf{deplacement\_alea} et sa gestion des "collisions" entre les individus.
 
-\item Valeurs par défaut : lance une simulation réduite par rapport à celle effectuée dans \textbf{launch\_sim}. La durée de la simulation est de 15 jours, dans une grille 30x30 avec 50 personnes, dont 5 sont des infectés initiaux. Cette simulation permet d'avoir une vue plus globale du comportement d'une population tel que décrit par les fonctions métier.\\
+\item Valeurs par défaut : lance une simulation réduite par rapport à celle effectuée dans \textbf{launch\_sim}. La durée de la simulation est de 15 jours, dans une grille 30x30 avec 50 personnes, dont 5 sont des infectés initiaux. Cette simulation permet d'avoir une vue plus globale du comportement d'une population tel que décrit par les fonctions métiers.\\
 \end{itemize}
 
 Pour gérer l'affichage de la grille, \textbf{idle} défini trois fonctions :
@@ -457,7 +457,7 @@ Il est conçu pour générer un graphique représentant des intervalles de confi
 
 Le script prévoit l'usage d'arguments par ligne de commande. Seul le premier argument passé après le nom du script compte et est interprété comme le nom du répertoire dans lequel les fichiers des graphiques seront crées.
 
-Des constantes sont définies pour indiquer où le script doit lire les fichiers CSV et où il doit créer les fichiers contenant les graphiques. Il lit donc les fichiers CSV crées par \textbf{stats\_sim} qui se situent dans le répertoire \textbf{out/} et dessine ses graphiques dans le répertoire \textbf{redaction/graphiques/}. L'argument passé par ligne de commande définit alors le sous-répertoire dans lequel les fichiers seront crées, tel que \textbf{redaction/graphiques/sous-repertoire/}.\\
+Des constantes sont définies pour indiquer où le script doit lire les fichiers CSV et où il doit créer les fichiers contenant les graphiques. Il lit donc les fichiers CSV crées par \textbf{stats\_sim} qui se situent dans le répertoire \textbf{out/} et dessine ses graphiques dans le répertoire \textbf{redaction/graphiques/}. L'argument passé par ligne de commande définit alors le sous-répertoire dans lequel les fichiers seront créés, tel que \textbf{redaction/graphiques/sous-repertoire/}.\\
 
 Ensuite, le script définit et fait appel à une fonction nommée \textbf{draw}. Comme son nom l'indique, c'est elle qui est chargée de créer un fichier et de dessiner dedans un graphique correspondant à un fichier CSV. Elle prend comme paramètres un DataFrame (df) contenant les bornes inférieures et supérieures des intervalles de confiance, un titre pour le graphique, le chemin (path\_file) où enregistrer le graphique, et le nom du fichier (file\_name). Elle crée un graphique avec deux lignes (pour les bornes inférieure et supérieure) et une zone remplie entre elles, représentant les intervalles de confiance.
 
