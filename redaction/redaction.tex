@@ -90,7 +90,7 @@ Les objectifs spécifiques de cette simulation sont les suivants :
 
 \begin{enumerate}
 
-\item \textbf{Modélisation la population et l'espace de simulation}
+\item \textbf{Modélisation de la population et de l'espace de simulation}
 \begin{itemize}
 \item Création d'une grille 2D torique pour représenter l'espace dans lequel les individus se déplacent.
 \item Initialisation d'une population avec des positions aléatoires sur cette grille.
@@ -107,14 +107,14 @@ Les objectifs spécifiques de cette simulation sont les suivants :
 \item Modélisation de la période d'incubation et les différentes phases de contagiosité du virus sur une période de 12 jours.
 \end{itemize}
 
-\item \textbf{Variables}
+\item \textbf{Variable d'expérience}
 \begin{itemize}
 \item Initialisation de la simulation avec différents nombres de personnes contaminées (de 1 à 10) afin d'observer les effets sur la propagation.
 \end{itemize}
 
 \item \textbf{Statistiques}
 \begin{itemize}
-\item Les simulations sont répétées 30 fois pour chaque valeur de notre variable d'expérience (nombre initial de contaminés).
+\item Les simulations sont répétées 30 fois pour chaque valeur de notre variable d'expérience.
 \item Les résultats sont collectés et présentés sous forme de tableaux avec des intervalles de confiance à 95\%.
 \end{itemize}
 
@@ -192,7 +192,7 @@ Le sous-répertoire \textbf{packages/} contient :
 \end{itemize}
 
 \subsubsection{Code source et builder}
-Les fonctions (fonctions métier, initialisation et fonction launch\_sim) ainsi que les structures de données communes aux deux programmes sont définies dans le fichier source \textbf{rhinite.c} et son fichier d'en-tête \textbf{rhinite.h}. Ensuite, chaque programme possède son propre fichier source qui fait appel à \textbf{rhinite.h}.
+Les fonctions (fonctions métiers, d'initialisation et fonction launch\_sim) ainsi que les structures de données communes aux deux programmes sont définies dans le fichier source \textbf{rhinite.c} et son fichier d'en-tête \textbf{rhinite.h}. Ensuite, chaque programme possède son propre fichier source qui fait appel à \textbf{rhinite.h}.
 
 Comme expliqué précédemment, le projet est équipé d'un builder (\textbf{makefile}) qui facilite le processus de compilation des fichiers sources du projet mais aussi des différents packages. Les informations relatives à son utilisation sont disponibles dans le fichier \textbf{README.md} mentionné précédemment.
 
@@ -206,7 +206,7 @@ Le fichier \textbf{rhinite.h} défini deux types personnalisés :
 typedef enum {SAIN, INCUBANT, CONTAGIEUX, GUERI} etat_t;
 \end{lstlisting}
 
-\item \textbf{personne\_t} : structure représentant un individu (ou personne) d'une population. Composée d'un couple d'entiers représentant la position de la personne sur la grille, d'un état comme défini au-dessus et d'un autre entier comptant le nombre de jours depuis que la personne est infectée.
+\item \textbf{personne\_t} : structure représentant un individu (ou personne) d'une population. Composée d'un couple d'entiers représentant la position de la personne sur la grille, d'un état comme défini au-dessus et d'un autre entier comptant le nombre de jours depuis l'infection de la personne.
 \begin{lstlisting}
 typedef struct {
     int x, y;
@@ -216,7 +216,7 @@ typedef struct {
 \end{lstlisting}
 \end{itemize}
 
-Une population pourra ainsi être représentée par un tableau de personne. 
+Une population pourra ainsi être représentée par un tableau de \textbf{personne\_t}. 
 
 \subsection{Fonctions d'initialisation}
 Le fichier \textbf{rhinite.c} permet l'initialisation d'une population grâce à une fonction nommée \textbf{init\_population}. Cette fonction permet donc l'initialisation d'une population, induisant qu'elle fourni à ses individus des coordonnées aléatoires uniques. La fonction retourne un tableau de n personnes.
@@ -294,7 +294,7 @@ Ainsi, pour chaque itération de la seconde boucle, un appel à \textbf{launch\_
 
 Le programme exploite ce tableau de pointeur pour réaliser des calculs statistiques. Pour chaque jour, il calcule le nombre de contamination moyen des 30 réplications, leur écart-type et à partir de cela, un intervalle de confiance à 95\%. L'intervalle est stocké dans un second tableau ayant une taille égale à $j$.
 
-Enfin, le programme inscrit ce tableau d'intervalles dans un ficher formaté CSV avec un nom indiquant la valeur de \textbf{num\_infect\_init} avec laquelle la simulation a tournée. Ceci conclu une itération de la première boucle. Une fois cette dernière finie, le programme se termine.
+Enfin, le programme inscrit ce tableau d'intervalles dans un ficher formaté CSV avec un nom indiquant la valeur de \textbf{num\_infect\_init} avec laquelle la simulation a tournée. Ceci conclu une itération de la première boucle. Une fois cette dernière finie, le programme se termine en ayant produit 10 fichiers CSV.
 
 \subsubsection{idle}
 Le programme \textbf{idle} est une annexe permettant de visualiser le comportement de la population simulée. Il utilise une fonction nommée \textbf{launch\_idle} qui correspond à une "redéfinition" de la fonction \textbf{launch\_sim} auquel des affichages dans le terminal ont été ajoutés.\\
@@ -459,7 +459,7 @@ Le script prévoit l'usage d'arguments par ligne de commande. Seul le premier ar
 
 Des constantes sont définies pour indiquer où le script doit lire les fichiers CSV et où il doit créer les fichiers contenant les graphiques. Il lit donc les fichiers CSV crées par \textbf{stats\_sim} qui se situent dans le répertoire \textbf{out/} et dessine ses graphiques dans le répertoire \textbf{redaction/graphiques/}. L'argument passé par ligne de commande définit alors le sous-répertoire dans lequel les fichiers seront créés, tel que \textbf{redaction/graphiques/sous-repertoire/}.\\
 
-Ensuite, le script définit et fait appel à une fonction nommée \textbf{draw}. Comme son nom l'indique, c'est elle qui est chargée de créer un fichier et de dessiner dedans un graphique correspondant à un fichier CSV. Elle prend comme paramètres un DataFrame (df) contenant les bornes inférieures et supérieures des intervalles de confiance, un titre pour le graphique, le chemin (path\_file) où enregistrer le graphique, et le nom du fichier (file\_name). Elle crée un graphique avec deux lignes (pour les bornes inférieure et supérieure) et une zone remplie entre elles, représentant les intervalles de confiance.
+Ensuite, le script définit et fait appel à une fonction nommée \textbf{draw}. Comme son nom l'indique, c'est elle qui est chargée de créer un fichier et de dessiner dedans un graphique correspondant à un fichier CSV. Elle prend comme paramètres un DataFrame (df) contenant les bornes inférieures et supérieures des intervalles de confiance, un titre pour le graphique, le chemin (path\_file) où enregistrer le graphique, et le nom du fichier (file\_name). Elle crée un graphique avec deux courbes (pour les bornes inférieure et supérieure) et une zone pleine entre elles, représentant les intervalles de confiance.
 
 Le script fait appel à \textbf{draw} pour chaque fichier source CSV afin de créer un graphique par fichier source. Chaque appel est précédé par la création d'un DataFrame où les données de la première colonne du fichier csv sont contenues dans un champ correspondant à la borne inférieure et la seconde colonne dans un champ correspondant à la borde supérieure. L'appel se fait donc avec ce DataFrame en argument.
 
