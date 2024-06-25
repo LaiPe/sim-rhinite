@@ -1,9 +1,0 @@
-I) Projet
-	A) Présentation du projet et de ses objectifs
-	B) Choix conceptuels
-
-II) Programme informatique
-	A) Structure
-	B) Choix d'implémentation
-
-III) Analyse des résultats
